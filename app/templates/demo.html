@@ -1,0 +1,640 @@
+{% extends "header.html" %}
+
+{% block body %}
+{{ super() }}
+<!-- Vertical tabs -->
+<div class="row" id="body-row">
+    <div id="sidebar-container" class="sidebar-expanded d-none d-md-block">
+        <a href="#top" data-toggle="sidebar-colapse"
+            class="bg-light navbar-light list-group-item list-group-item-action d-flex align-items-center">
+            <div class="d-flex w-100 justify-content-start align-items-center">
+                <span id="collapse-icon" class="navbar-toggler-icon"></span>
+                <!-- <span id="collapse-text" class="menu-collapsed">Collapse</span> -->
+            </div>
+        </a>
+        <div id="navbarToggle">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-predict-tab" data-toggle="pill" href="#v-pills-predict" role="tab"
+                    aria-controls="v-pills-predict" aria-selected="true">
+                    <div class="d-flex w-100 justify-content-start align-items-center">
+                        <span class="navbar-toggler-icon"></span>
+                        <span class="menu-collapsed">Predict</span>
+                    </div>
+                </a>
+                <a class="nav-link" id="v-pills-train-tab" data-toggle="pill" href="#v-pills-train" role="tab"
+                    aria-controls="v-pills-train" aria-selected="false">
+                    <div class="d-flex w-100 justify-content-start align-items-center">
+                        <span class="navbar-toggler-icon"></span>
+                        <span class="menu-collapsed">Train</span>
+                    </div>
+                </a>
+                <a class="nav-link" id="v-pills-models-tab" data-toggle="pill" href="#v-pills-models" role="tab"
+                    aria-controls="v-pills-models" aria-selected="false">
+                    <div class="d-flex w-100 justify-content-start align-items-center">
+                        <span class="navbar-toggler-icon"></span>
+                        <span class="menu-collapsed">Models</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="tab-content" id="v-pills-tabContent">
+            <!-- PREDICT TAB -->
+            <div class="tab-pane fade show active" id="v-pills-predict" role="tabpanel" aria-labelledby="v-pills-predict-tab">
+                <!-- Input form -->
+                <div class="accordion" id="accordionPredict">
+                    <div class="card border-light">
+                        <div class="card-title" id="predict-form-header">
+                            <h5 class="mb-0">
+                                <button class="btn btn-light btn-block text-left" type="button" data-toggle="collapse" data-target="#predictParameterCollapse"
+                                    aria-expanded="true" aria-controls="predictParameterCollapse">
+                                    PARAMETERS 
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="predictParameterCollapse" class="collapse show" aria-labelledby="predict-form-header" data-parent="#accordionPredict">
+                            <div class="card-body">
+                                <form method="POST" id="predictform" enctype="multipart/form-data">
+                                    <div class="form-row">
+                                        <div class="form-group col-md">
+                                            <label for="inputCity">Job Name</label>
+                                            <input type="text" class="form-control" id="predict-job-name" name="predictJobName">
+                                        </div>
+                                    </div>
+                                    <div class="form-row justify-content-around">
+                                        <div class="form-group col-md-4">
+                                            <label for="validationCustom04">Select CNN model</label>
+                                            <div class="row d-sm-flex justify-content mt-sm-auto">
+                                                <select id="predict-select-cnn-model" name="predictSelectCnnModel" class="selectpicker" multiple data-live-search="true" 
+                                                data-style="btn-outline-primary" data-actions-box="true" data-size="4">
+                                                    <optgroup label="Flange and Bolt">
+                                                        {% for cnn_model in cnn_models %}
+                                                        {% if "fnb" in cnn_model %}
+                                                        <option data-tokens='{{cnn_model}}'>{{cnn_model}}</option>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </optgroup>
+                                                    <optgroup label="Cosmetic">
+                                                        {% for cnn_model in cnn_models %}
+                                                        {% if "cosmetic" in cnn_model %}
+                                                        <option data-tokens='{{cnn_model}}'>{{cnn_model}}</option>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </optgroup>
+                                                    <optgroup label="Wiretag">
+                                                        {% for cnn_model in cnn_models %}
+                                                        {% if "wiretag" in cnn_model %}
+                                                        <option data-tokens='{{cnn_model}}'>{{cnn_model}}</option>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </optgroup>
+                                                    <optgroup label="Unspecified">
+                                                        {% for cnn_model in cnn_models %}
+                                                        {% if "wiretag" not in cnn_model and "fnb" not in cnn_model and "cosmetic" not in cnn_model %}
+                                                        <option data-tokens='{{cnn_model}}'>{{cnn_model}}</option>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </optgroup>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="validationCustom04">Select Yolo model</label>
+                                            <div class="row d-sm-flex justify-content mt-sm-auto">
+                                                <select id="predict-select-yolo-model" name="predictSelectYoloModel" class="selectpicker" multiple data-live-search="true"
+                                                    data-style="btn-outline-primary" data-actions-box="true" data-size="4">
+                                                    <optgroup label="Flange and Bolt">
+                                                        {% for yolo_model in yolo_models %}
+                                                        {% if "fnb" in yolo_model %}
+                                                        <option data-tokens='{{yolo_model}}'>{{yolo_model}}</option>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </optgroup>
+                                                    <optgroup label="Cosmetic">
+                                                        {% for yolo_model in yolo_models %}
+                                                        {% if "cosmetic" in yolo_model %}
+                                                        <option data-tokens='{{yolo_model}}'>{{yolo_model}}</option>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </optgroup>
+                                                    <optgroup label="Wiretag">
+                                                        {% for yolo_model in yolo_models %}
+                                                        {% if "wiretag" in yolo_model %}
+                                                        <option data-tokens='{{yolo_model}}'>{{yolo_model}}</option>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </optgroup>
+                                                    <optgroup label="Unspecified">
+                                                        {% for yolo_model in yolo_models %}
+                                                        {% if "wiretag" not in yolo_model and "fnb" not in yolo_model and "cosmetic" not in yolo_model %}
+                                                        <option data-tokens='{{yolo_model}}'>{{yolo_model}}</option>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </optgroup>
+                                                </select>
+                                            </div>
+                                        </div>  
+                                        <div class="form-group col-md-3">
+                                            <label for="customRange3">Yolo Confidence Threshold</label>
+                                            <input type="range" value="0.2" class="custom-range" min="0" max="1" step="0.01" required id="predict-yolo-confidence-threshold" name="PredictYoloConfidenceThreshold"
+                                                oninput="this.nextElementSibling.value = this.value">
+                                            <output>0.2</output>
+                                        </div>
+                                    </div>
+                                    <fieldset class="form-group" id="predict-image-input" name="predictImageInputBy">
+                                        <div class="row">
+                                            <legend class="col-form-label col-sm-2 pt-0">Image input by</legend>
+                                            <div class="col-sm-10">
+                                                <div class="form-check">
+                                                    <label class="form-check-label" for="gridImgIn1">
+                                                    <input class="form-check-input" type="radio" name="gridImgIn" id="gridImgIn1" value="upload" required>
+                                                        upload files
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <label class="form-check-label" for="gridImgIn2">
+                                                    <input class="form-check-input" type="radio" name="gridImgIn" id="gridImgIn2" value="serverpath" required>
+                                                        upload folder
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <div class="form-group" id="choosefile">
+                                        <label for="basic-url">Choose files</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="predict-browse-file-path" name="file" multiple/>
+                                            <label class="custom-file-label" for="customFile">Choose files...</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="serverpath">
+                                        <label for="basic-url">Select folder</label>
+                                        <div class="input-group mb-3">
+                                            <!-- <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon3">https://example.com/users/</span>
+                                            </div> -->
+                                            <input type="file" class="custom-file-input" id="predict-server-path" name="folder" aria-describedby="basic-addon3" directory="" webkitdirectory="" mozdirectory="">
+                                            <label class="custom-file-label" for="customFile">Select folder...</label>
+                                        </div>
+
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary" id="predict-result-button" name="button" data-toggle="collapse" data-target="#predictResultCollapse"
+                                    aria-expanded="true" aria-controls="predictResultCollapse" value="predict">
+                                        Predict
+                                        <span class="ui-button-text"></span>
+                                        images
+                                    </button>
+                                    <!-- <input type="submit" class="btn btn-primary" id="predict-result-button" name="predictbutton" value="Predict {{n_img}} images"/> -->
+                                </form>
+                                <div class="border-primary" style="width:auto; margin-bottom: 100px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row justify-content-center" id="predict_loading">
+                        <div class="border-primary" style="width:auto; margin-bottom: 50px;"></div>
+                        <div class="spinner-grow text-primary" role="status" >
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div class="card border-light" id="predict-result-whole-section">
+                        <div class="card-title" id="predict-result-header">
+                            <h5 class="mb-0">
+                                <button class="btn btn-light btn-block text-left" type="button" data-toggle="collapse" data-target="#predictResultCollapse"
+                                    aria-expanded="true" aria-controls="predictResultCollapse">
+                                    CLICK TO VIEW RESULTS
+                                </button>
+                            </h5>
+                        </div> 
+                        <div id="predictResultCollapse" class="collapse {{show}}" aria-labelledby="predict-result-header" data-parent="#accordionPredict">
+                            <div class="ml-4">
+                                <!-- Horizontal tabs -->
+                                <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                                <!-- <div class="shadow p-3 mb-5 bg-white rounded">View Result</div> -->
+                                <nav>
+                                    <div role="tabpanel">
+                                        <ul class="nav nav-tabs" id="nav-tab" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="nav-imgv-tab" data-toggle="tab" href="#imgv" role="tab"
+                                                    aria-controls="imgv" aria-selected="true">Image View</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="nav-gridv-tab" data-toggle="tab" href="#gridv" role="tab" aria-controls="gridv"
+                                                    aria-selected="false">Table View</a>
+                                            </li>
+                                
+                                        </ul>
+                                    </div>
+                                </nav>
+                                <!-- Tab panes -->
+                                <div class="tab-content" id="nav-tabContent">
+                                    
+                                    <div role="tabpanel" class="tab-pane fade show active" id="imgv" role="tabpanel"
+                                        aria-labelledby="nav-imgv-tab">
+                                        <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                                        <div id="predictimgv">
+                                        </div>
+                                    </div>
+                                
+                                
+                                    <div role="tabpanel" class="tab-pane fade" id="gridv" role="tabpanel" aria-labelledby="nav-gridv-tab">
+                                        <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                                        <div id="predictgridv">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- TRAIN TAB -->
+            <div class="tab-pane fade" id="v-pills-train" role="tabpanel" aria-labelledby="v-pills-train-tab">
+                <!-- Horizontal tabs -->
+                <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                <!-- <div class="shadow p-3 mb-5 bg-white rounded">View Result</div> -->
+                <nav>
+                    <div role="tabpanel">
+                        <ul class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="nav-cnntrain-tab" data-toggle="tab" href="#cnntrain" role="tab"
+                                    aria-controls="cnntrain" aria-selected="true">CNN Train</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="nav-yolotrain-tab" data-toggle="tab" href="#yolotrain" role="tab" aria-controls="yolotrain"
+                                    aria-selected="false">Yolo5 Train</a>
+                            </li>
+                
+                        </ul>
+                    </div>
+                </nav>
+                <!-- Tab panes -->
+                <div class="tab-content" id="nav-tabContent">
+                    <div role="tabpanel" class="tab-pane fade show active" id="cnntrain" role="tabpanel" aria-labelledby="nav-cnntrain-tab">
+                        <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                        <!-- <p>Train CNN Model parameters</p> -->
+                        
+                        <form method="post" id="traincnnform" enctype="multipart/form-data">
+                            <div class="form-row">
+                                <div class="form-group col-md">
+                                    <label for="inputCity">Give a name to your job</label>
+                                    <input type="text" class="form-control" id="train-cnn-job-name" name="trainCnnJobName" placeholder="project-model-version projects: fnb, wiretag, cosmetic models: cnn1, cnn2...">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md">
+                                    <label for="inputCity">Epochs</label>
+                                    <input type="number" class="form-control" min="1" id="train-cnn-epochs" placeholder="10" name="trainCnnEpochs" required>
+                                </div>
+                                <div class="form-group col-md">
+                                    <label for="inputCity">Image resize</label>
+                                    <input type="number" class="form-control" min="1" id="train-cnn-image-resize" value="256" name="trainCnnImageResize" required>
+                                </div>
+                                <div class="form-group col-md">
+                                    <label for="inputCity">Batch size</label>
+                                    <input type="number" class="form-control" min="1" id="train-cnn-batch-size" value="32" name="trainCnnBatchSize" required>
+                                </div>
+                                <div class="form-group col-md">
+                                    <label for="inputCity">Target train size</label>
+                                    <input type="number" class="form-control" min="1" id="train-cnn-train-size" placeholder="500" name="trainCnnTrainSize" required>
+                                    <p style="color:grey;font-size:13px;">Target train size will allow the algorithm to augment the train dataset. Must be divisible by batch size.</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md">
+                                    <fieldset class="form-group" id="train-cnn-architecture" name="trainCnnArchitecture">
+                                        <div class="row">
+                                            <legend class="col-form-label col-sm pt-0">Select CNN architecture</legend>
+                                            <div class="col-sm-10">
+                                                <select id="traincnnarch" name="trainCnnArch" class="selectpicker" data-live-search="true"
+                                                    data-style="btn-outline-primary" data-actions-box="true" data-size="4" required>
+                                                    <option data-tokens="cnn1">CNN1</option>
+                                                    <option data-tokens="cnn2">CNN2</option>
+                                                    <option data-tokens="cnn3">CNN3</option>
+                                                    <option data-tokens="lenet5">lenet5</option>
+                                                    <option data-tokens="vgg">VGG</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="form-group col-md">
+                                    <fieldset class="form-group" id="train-cnn-classification-type" name="trainCnnClassificationType">
+                                        <div class="row">
+                                            <legend class="col-form-label col-sm pt-0">Classification Type</legend>
+                                            <div class="col-sm-10">
+                                                <div class="form-check">
+                                                    <label class="form-check-label" for="trainclasstype1">
+                                                        <input class="form-check-input" type="radio" name="trainClassType" id="trainclasstype1"
+                                                            value="multiclass" checked required>
+                                                        Multiclass
+                                                        <div class="description" style="color:grey;font-size:13px;">
+                                                            1 label per image
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <label class="form-check-label" for="trainclasstype2">
+                                                        <input class="form-check-input" type="radio" name="trainClassType" id="trainclasstype2"
+                                                            value="multilabel" required>
+                                                        Multilabel
+                                                        <div class="description" style="color:grey;font-size:13px;">
+                                                            multi-label per image
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <!-- <p>multiclass: 1 label per image; multilabel: multi-label per image</p> -->
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="form-group col-md">
+                                    <fieldset class="form-group" id="train-cnn-color" name="trainCnnColor">
+                                        <div class="row">
+                                            <legend class="col-form-label col-sm pt-0">Image Color</legend>
+                                            <div class="col-sm-10">
+                                                <div class="form-check">
+                                                    <label class="form-check-label" for="trainimgcolor1">
+                                                        <input class="form-check-input" type="radio" name="trainImgColor" id="trainimgcolor1"
+                                                            value="color" checked required>
+                                                        Color
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <label class="form-check-label" for="trainimgcolor2">
+                                                        <input class="form-check-input" type="radio" name="trainImgColor" id="trainimgcolor2"
+                                                            value="grayscale" required>
+                                                        Grayscale
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="form-group col-md">
+                                    <label for="customRange3">Test ratio</label>
+                                    <input type="range" value="0.2" class="custom-range" min="0" max="0.2" step="0.01" id="train-cnn-test-ratio"
+                                        name="trainCnnTestRatio" oninput="this.nextElementSibling.value = this.value">
+                                    <output>0.2</output>
+                                </div>
+                            </div>
+                            <div class="form-group" id="train-cnn-folder">
+                                <!-- <label for="basic-url">Select folder</label>
+                                                        <div class="input-group mb-3">
+                                                            <input type="file" class="custom-file-input" id="train-cnn-folder-path" name="folder"
+                                                                aria-describedby="basic-addon3" directory="" webkitdirectory="" mozdirectory="">
+                                                            <label class="custom-file-label" for="customFile">Select folder...</label>
+                                                        </div> -->
+                                <label for="basic-url">Image folder path</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="train-cnn-folder-path" aria-describedby="basic-addon3"
+                                        name="trainCnnInputPath" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="train-cnn-result-button" name="button" data-toggle="collapse"
+                                data-target="#trainCnnResultCollapse" aria-expanded="true" aria-controls="trainCnnResultCollapse"
+                                value="traincnn">
+                                Initiate training on
+                                <span class="ui-button-text"></span>
+                                images
+                            </button>
+                        </form>
+                        <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                        <hr style="border-top: 1px dashed #0074d9;">
+                        <button type="submit" class="btn btn-primary" id="train-cnn-result-refresh-button" name="button" value="traincnn">
+                            Refresh to see current running job status
+                        </button>
+                        <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                        <div class="row justify-content-center" id="train_cnn_loading">
+                            <div class="border-primary" style="width:auto; margin-bottom: 50px;"></div>
+                            <div class="spinner-grow text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <div class="spinner-grow text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <div class="spinner-grow text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <div id="trainCnnresult">
+                        </div>
+                    </div>
+                
+                
+                    <div role="tabpanel" class="tab-pane fade" id="yolotrain" role="tabpanel" aria-labelledby="nav-yolotrain-tab">
+                        <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                        <!-- <p>Yolo Train Form</p> -->
+                        
+                        <form method="post" id="trainyoloform" enctype="multipart/form-data">
+                            <div class="form-row">
+                                <div class="form-group col-md">
+                                    <label for="inputCity">Give a name to your job</label>
+                                    <input type="text" class="form-control" id="train-yolo-job-name" name="trainYoloJobName" placeholder="project-model-version projects: fnb, wiretag, cosmetic models: yolos, yolom, yolox...">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md">
+                                    <label for="inputCity">Epochs</label>
+                                    <input type="number" min="1" class="form-control" id="train-yolo-epochs" name="trainYoloEpochs" required>
+                                </div>
+                                <div class="form-group col-md">
+                                    <label for="inputCity">Batch size</label>
+                                    <input type="number" min="1" class="form-control" id="train-yolo-batch-size" name="trainYoloBatchSize" value="32" required>
+                                </div>
+                                <div class="form-group col-md">
+                                <label for="customRange3">Test ratio</label>
+                                <input type="range" value="0.2" class="custom-range" min="0" max="0.2" step="0.01" id="train-yolo-test-ratio" name="trainYoloTestRatio"
+                                    oninput="this.nextElementSibling.value = this.value" required>
+                                <output>0.2</output>
+                                </div>
+                                <div class="form-group col-md">
+                                    <fieldset class="form-group" id="train-yolo-model-size" name="trainYoloModelS">
+                                        <div class="row">
+                                            <legend class="col-form-label col-sm pt-0">Image Color</legend>
+                                            <div class="col-sm-10">
+                                                <div class="form-check">
+                                                    <label class="form-check-label" for="trainyolomodelsize1">
+                                                        <input class="form-check-input" type="radio" name="trainYoloModelSize" id="trainyolomodelsize1"
+                                                            value="s" checked required>
+                                                        S
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <label class="form-check-label" for="trainyolomodelsize2">
+                                                        <input class="form-check-input" type="radio" name="trainYoloModelSize" id="trainyolomodelsize2"
+                                                            value="m" required>
+                                                        M
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <label class="form-check-label" for="trainyolomodelsize3">
+                                                        <input class="form-check-input" type="radio" name="trainYoloModelSize" id="trainyolomodelsize3"
+                                                            value="l" required>
+                                                        L
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <label class="form-check-label" for="trainyolomodelsize4">
+                                                        <input class="form-check-input" type="radio" name="trainYoloModelSize" id="trainyolomodelsize4"
+                                                            value="x" required>
+                                                        X
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="form-group col-md">
+                                    <legend class="col-form-label col-sm pt-0">Optimizer</legend>
+                                    <div class="form-group form-check">
+                                        <input type="checkbox" class="form-check-input" id="train-yolo-optimizer" name="trainYoloOptimizer" checked>
+                                        <label class="form-check-label" for="exampleCheck1">Adam</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="serverpath">
+                                <label for="basic-url">Image folder path</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="train-yolo-url" aria-describedby="basic-addon3" name="trainYoloUrl" required>
+                                </div>
+                        
+                            </div>
+                            <button type="submit" class="btn btn-primary" name="button" value="trainyolo">Initiate Yolo5 training on images</button>
+                        </form>
+                        <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                        <hr style="border-top: 1px dashed #0074d9;">
+                        <button type="submit" class="btn btn-primary" id="train-yolo-result-refresh-button" name="button" value="trainyolorefresh">
+                            Refresh to see current running job status
+                        </button>
+                        <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                        <div class="row justify-content-center" id="train_yolo_loading">
+                            <div class="border-primary" style="width:auto; margin-bottom: 50px;"></div>
+                            <div class="spinner-grow text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <div class="spinner-grow text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <div class="spinner-grow text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <div id="trainYoloresult"></div>
+                    </div>
+                
+                </div>
+            </div>
+
+
+
+            <!-- Models tab -->
+            <div class="tab-pane fade" id="v-pills-models" role="tabpanel" aria-labelledby="v-pills-models-tab">
+                <div class="col">
+                    <form method="post" id="modelcnnform" enctype="multipart/form-data">
+                        <div class="form-row">
+                            <div class="form-group col-md">
+                                <label for="validationCustom04">Choose CNN models</label>
+                                <div class="row d-sm-flex justify-content mt-sm-auto">
+                                    <select id="compare-cnn-model" name="compareCnnModel" class="selectpicker" multiple
+                                        data-live-search="true" data-style="btn-outline-primary" data-actions-box="true" data-size="4">
+                                        <optgroup label="Flange and Bolt">
+                                            {% for cnn_model in cnn_models %}
+                                            {% if "fnb" in cnn_model %}
+                                            <option data-tokens='{{cnn_model}}'>{{cnn_model}}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </optgroup>
+                                        <optgroup label="Cosmetic">
+                                            {% for cnn_model in cnn_models %}
+                                            {% if "cosmetic" in cnn_model %}
+                                            <option data-tokens='{{cnn_model}}'>{{cnn_model}}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </optgroup>
+                                        <optgroup label="Wiretag">
+                                            {% for cnn_model in cnn_models %}
+                                            {% if "wiretag" in cnn_model %}
+                                            <option data-tokens='{{cnn_model}}'>{{cnn_model}}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </optgroup>
+                                        <optgroup label="Unspecified">
+                                            {% for cnn_model in cnn_models %}
+                                            {% if "wiretag" not in cnn_model and "fnb" not in cnn_model and "cosmetic" not in cnn_model %}
+                                            <option data-tokens='{{cnn_model}}'>{{cnn_model}}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group col-md">
+                                <fieldset class="form-group" name="compareCnnModelPlotOptionGroup">
+                                    <div class="row">
+                                        <legend class="col-form-label col-sm pt-0">Plot option</legend>
+                                        <div class="col-sm-10" id="compare-cnn-model-plot-option">
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="comparecnnmodelplotoption1">
+                                                    <input class="form-check-input" type="radio" name="compareCnnModelPlotOption" id="comparecnnmodelplotoption1"
+                                                        value="separate" checked required>
+                                                    Compare by model
+                                                    <div class="description" style="color:grey;font-size:13px;">
+                                                        One graph per model
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="comparecnnmodelplotoption2">
+                                                    <input class="form-check-input" type="radio" name="compareCnnModelPlotOption" id="comparecnnmodelplotoption2"
+                                                        value="combine" required>
+                                                    Compare by metric
+                                                    <div class="description" style="color:grey;font-size:13px;">
+                                                        One graph per metric
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="form-group col-md" id="compareCnnModelColCombo">
+                                <label for="validationCustom04">Select metrics</label>
+                                <div class="row d-sm-flex justify-content mt-sm-auto">
+                                    <select id="compare-cnn-model-col" name="compareCnnModelCol" class="selectpicker" multiple 
+                                        data-style="btn-outline-primary" data-actions-box="true" data-size="4">
+                                        <option data-tokens='train_loss'>train_loss</option>
+                                        <option data-tokens='train_acc'>train_acc</option>
+                                        <option data-tokens='val_loss'>val_loss</option>
+                                        <option data-tokens='val_acc'>val_acc</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" name="button" class="btn btn-primary" value="modelcnnformbutton">Submit</button>
+                    </form>
+                    <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+                    <div id="modelCnnresult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock body %}

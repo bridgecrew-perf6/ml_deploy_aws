@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <!-- Image and text -->
+    <meta charset="utf-8">
+    <title>Demo Multi Class Image Classification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- <link href="{{ url_for('static', filename='css/all.min.css') }}" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.22/af-2.3.5/b-1.6.5/b-colvis-1.6.5/b-flash-1.6.5/b-html5-1.6.5/b-print-1.6.5/cr-1.5.2/fc-3.3.1/fh-3.1.7/kt-2.5.3/r-2.2.6/rg-1.1.2/rr-1.2.7/sc-2.0.3/sb-1.0.0/sp-1.2.1/sl-1.3.1/datatables.min.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.dataTables.min.css"> -->
+<style>
+    .form-group label> .description{
+    display:none;
+    }
+    .form-group input[type="radio"]:checked ~ .description{
+        display:block;
+    }
+    .sidebar-expanded {
+    width: 230px;
+    }
+    .sidebar-collapsed {
+        width: 60px;
+    }
+    /* Closed submenu icon */
+    #sidebar-container .list-group .list-group-item[aria-expanded="false"] .submenu-icon::after {
+    content: " \f0d7";
+    font-family: FontAwesome;
+    display: inline;
+    text-align: right;
+    padding-left: 10px;
+    }
+    /* Opened submenu icon */
+    #sidebar-container .list-group .list-group-item[aria-expanded="true"] .submenu-icon::after {
+    content: " \f0da";
+    font-family: FontAwesome;
+    display: inline;
+    text-align: right;
+    padding-left: 10px;
+    }
+
+    #predict-image-caption {
+        white-space: pre-line;
+    }
+
+
+</style>
+</head>
+
+<body>
+    <header>
+
+        <nav class="navbar navbar-light bg-light">
+
+            <!-- <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='images/dell_logo.png') }}" style="max-height:40px; margin-top:5px;"
+                    class="d-inline-block align-top" alt="" loading="lazy"> -->
+                <title>Valerie's demo</title>
+            </a>
+        </nav>
+        <!-- <div class="container-fluid">
+            <a href="/dashboard/"><button type="button" class="btn btn-primary" aria-label="Left Align"
+                    style="margin-top: 5px; margin-bottom: 5px; height: 44px; margin-right: 15px">
+                    <span class="glyphicon glyphicon-off" aria-hidden="true"></span> Start
+                </button></a>
+            <div style="margin-right: 10px; margin-left: 15px; margin-top: 5px; margin-bottom: 5px;" class="container-fluid">
+            </div>
+        </div> -->
+
+
+    </header>
+
+    
+
+    <div class="border-primary" style="width:auto; margin-bottom: 15px;"></div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for message in messages %}
+        <div class="message_flash">{{ message }}</div>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <div class="container-fluid" style="min-height:100%;">
+        {% block body %}{% endblock body %}
+    </div>
+    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.22/af-2.3.5/b-1.6.5/b-colvis-1.6.5/b-flash-1.6.5/b-html5-1.6.5/b-print-1.6.5/cr-1.5.2/fc-3.3.1/fh-3.1.7/kt-2.5.3/r-2.2.6/rg-1.1.2/rr-1.2.7/sc-2.0.3/sb-1.0.0/sp-1.2.1/sl-1.3.1/datatables.min.js"></script>
+    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/all.min.js') }}"></script> -->
+
+
+
+    <script>$(document).ready(function () {
+            $('.selectpicker').selectpicker();
+        });
+    </script>
+    <script>
+        // Collapse/Expand icon
+        $('#collapse-icon').addClass('fa-angle-double-left');
+
+        // Collapse click
+        $('[data-toggle=sidebar-colapse]').click(function () {
+            SidebarCollapse();
+        });
+
+        function SidebarCollapse() {
+            $('.menu-collapsed').toggleClass('d-none');
+            $('.sidebar-submenu').toggleClass('d-none');
+            $('.submenu-icon').toggleClass('d-none');
+            $('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
+
+            // Treating d-flex/d-none on separators with title
+            var SeparatorTitle = $('.sidebar-separator-title');
+            if (SeparatorTitle.hasClass('d-flex')) {
+                SeparatorTitle.removeClass('d-flex');
+            } else {
+                SeparatorTitle.addClass('d-flex');
+            }
+
+            // Collapse/Expand icon
+            $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
+        }
+    </script>
+    <script>
+        $(function () {
+                // setTimeout() function will be fired after page is loaded
+                // it will wait for 5 sec. and then will fire
+                // $(".message_flash").hide() function
+                setTimeout(function () {
+                    $(".message_flash").hide('blind', {}, 500)
+                }, 5000);
+            }) 
+    </script>
+    <script>
+        $('#choosefile').hide(); // on default, hide textbox, when choosefile is selected
+            $('#gridImgIn1').click(function () {
+                var checked_status = this.checked;
+                if (checked_status == true) {
+                    $('#choosefile').show();
+                    $('#serverpath').hide();
+                    $("#predict-result-button span").text('');
+                    $('#predict-server-path').next('.custom-file-label').html('');
+                }
+            });
+        $('#serverpath').hide(); // on default, hide textbox, when serverpath is selected
+            $('#gridImgIn2').click(function () {
+                var checked_status = this.checked;
+                if (checked_status == true) {
+                    $('#serverpath').show();
+                    $('#choosefile').hide(); 
+                    $("#predict-result-button span").text('');
+                    $('#predict-browse-file-path').next('.custom-file-label').html('');
+                }
+            });
+    </script>
+    <script>
+        $('#predict-browse-file-path').on('change', function () {
+            // show predict input image names and display number of images in predict images button
+            var files = [];
+            //get the file name
+            if ($(this)[0].files.length<5) {
+                for (var i = 0; i < $(this)[0].files.length; i++) {
+                    files.push($(this)[0].files[i].name);
+                }}
+            if ($(this)[0].files.length >= 5) {
+                for (var i = 0; i < $(this)[0].files.length; i++) {
+                    if (i<5) {files.push($(this)[0].files[i].name);}
+                }
+                files.push("and more files")
+            }
+            
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(files.join(', '));
+            // display number of images in the predict image button
+            if ($(this)[0].files.length == 0) {
+                $("#predict-result-button span").text('');
+            };
+            if ($(this)[0].files.length !== 0){ 
+                $("#predict-result-button span").text($(this)[0].files.length);};
+            
+        })
+    </script>
+    <script>
+        $('#predict-server-path').on('change', function (e) {
+            // show predict input folder name
+            if (e.target.files.length) {
+            $(this).next('.custom-file-label').html(e.target.files[0].webkitRelativePath.split("/")[0]);
+            };
+            
+            // display number of images in the predict image button
+            if ($(this)[0].files.length == 0) {
+                $("#predict-result-button span").text('');
+            };
+            if ($(this)[0].files.length !== 0) {
+                $("#predict-result-button span").text($(this)[0].files.length);
+            };
+
+        })
+    </script>
+    <script>
+        $(document).ready(function ($) {
+
+            $(document).on('frmFormErrors', function (event, form, response) {
+                alert("errors");
+            });
+
+        });
+    </script>
+
+    <script type="text/javascript">
+        // predict form submit to .py file without refreshing and display result
+        
+
+        $(document).ready(function(){
+            $("#predict-result-whole-section").hide();
+            $("#predict_loading").hide();
+
+            $('#predictform').on('submit', function(e) {
+                
+                e.preventDefault();
+                e.returnValue = false;
+                $("#predict_loading").show();
+                $("#predict-result-whole-section").hide();
+                // var dataString = $(this).serialize(); this does not get file data
+                // dataString.append('file', $('#predictform').prop('files')[0]);
+                // alert(dataString);
+
+                var form_data = new FormData(e.target);
+                console.log(...form_data);
+                $.ajax({
+                        url: "/predictresult/",
+                        type: "POST",
+                        data: form_data,
+                        success: function(resp) {
+                            $("#predict-result-whole-section").show();
+                            $("#predict_loading").hide();
+
+                            if ($('#predictresultimageid').length) {
+                                $('div#predictresultimageid').remove();
+                            }
+                            if ($('#predictresulttableid').length) {
+                                $('div#predictresulttableid').remove();
+                            }
+                            $('div#predictimgv').append(resp.image);
+                            $('div#predictgridv').append(resp.table);
+                        },
+                        error: function (resp) {
+                            console.log(JSON.stringify(resp));
+                            },
+                        // complete:function(){
+                        //     // make sure that you are no longer handling the submit event; clear handler
+                        //     $(this).off('submit');
+                        //     // actually submit the form
+                        //     $(this).submit();},
+                        cache:false,
+                        contentType:false,
+                        // dataType:'json',
+                        processData:false
+                    });
+                return false;
+                
+
+            });
+        });
+        
+        // // train cnn form submit
+        // $( "form#traincnn" ).on("submit", function(e) {
+
+        //     var dataString = $(this).serialize();
+            
+        //     // alert(dataString); return false;
+        
+        //     $.ajax({
+        //     type: "POST",
+        //     url: "bin/process.php",//call a local script: .py to process the model
+        //     data: dataString,
+        //     success: function () {
+        //         $("#trainCnnresult").html(`<div class="row" id="traincnnresultview"></div>`);
+        //         $("#traincnnresultview")
+        //         .html(`{% for item in image_folder %}
+        //                 <div class="column">
+        //                     {% set imgname = dir+item %}
+        //                     <img src="{{ url_for('static', filename=imgname) }}" class="rounded float-left" alt="...">
+        //                     <p>{{item}}</p>
+        //                 </div>
+        //                 {% endfor %}
+        //                 </div>`)
+        //         .hide()
+        //         .fadeIn(500);
+        //     }
+        //     });
+
+        //     e.preventDefault();
+        // });
+        // });
+
+        // // train yolo form submit
+        // $( "form#trainyolo" ).on( "submit", function(e) {
+
+        //     var dataString = $(this).serialize();
+            
+        //     // alert(dataString); return false;
+        
+        //     $.ajax({
+        //     type: "POST",
+        //     url: "bin/process.php",//call a local script: .py to process the model
+        //     data: dataString,
+        //     success: function () {
+        //         $("#trainYoloresult").html(`<div class="row" id="trainYoloresultview"></div>`);
+        //         $("#trainYoloresultview")
+        //         .html(`{% for item in image_folder %}
+        //                 <div class="column">
+        //                     {% set imgname = dir+item %}
+        //                     <img src="{{ url_for('static', filename=imgname) }}" class="rounded float-left" alt="...">
+        //                     <p>{{item}}</p>
+        //                 </div>
+        //                 {% endfor %}
+        //                 </div>`)
+        //         .hide()
+        //         .fadeIn(500);
+        //     }
+        //     });
+
+        //     e.preventDefault();
+        // });
+        // });
+
+        // // model cnn comparison form submit
+        // $( "form#modelcnn" ).on( "submit", function(e) {
+
+        //     var dataString = $(this).serialize();
+            
+        //     // alert(dataString); return false;
+        
+        //     $.ajax({
+        //     type: "POST",
+        //     url: "bin/process.php",//call a local script: .py to process the model
+        //     data: dataString,
+        //     success: function () {
+        //         $("#modelCnnresult").html(`<div class="row" id="modelCnnresultview"></div>`);
+        //         $("#modelCnnresultview")
+        //         .html(`{% for item in image_folder %}
+        //                 <div class="column">
+        //                     {% set imgname = dir+item %}
+        //                     <img src="{{ url_for('static', filename=imgname) }}" class="rounded float-left" alt="...">
+        //                     <p>{{item}}</p>
+        //                 </div>
+        //                 {% endfor %}
+        //                 </div>`)
+        //         .hide()
+        //         .fadeIn(500);
+        //     }
+        //     });
+
+        //     e.preventDefault();
+        // });
+        // });
+    </script>
+
+
+</body>
+
+
+
+
+
+</html>
+

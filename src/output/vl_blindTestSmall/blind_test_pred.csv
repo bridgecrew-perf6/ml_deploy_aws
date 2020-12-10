@@ -1,0 +1,9 @@
+pred_prob,pred,actual,img_file
+"[9.5153093e-01 4.0560449e-04 7.3171046e-05 1.6567137e-04 2.5585962e-03
+ 1.2470416e-03 2.0946026e-02 1.4740930e-02 8.3319703e-03]",buoy,buoy,data/processedSmall/test/buoy/anchor-warp-rope-buoy-beach-2881563.jpg
+"[9.1910440e-01 2.2390552e-04 1.7546252e-03 8.5042557e-04 6.1491686e-05
+ 2.4246341e-03 3.7929926e-02 1.8218075e-03 3.5828769e-02]",buoy,buoy,data/processedSmall/test/buoy/beach-buoy-w-water-sea-ocean-1042883.jpg
+"[1.3157963e-05 9.9679583e-01 5.1367428e-04 1.2819440e-03 1.4970579e-05
+ 1.5618272e-05 2.6004662e-05 9.7122193e-06 1.3291170e-03]",cruise ship,cruise ship,data/processedSmall/test/cruise ship/adventure-of-the-seas-cruise-ship-caribb-1218316.jpg
+"[3.4921302e-06 9.8875952e-01 9.3374122e-03 1.5425859e-03 3.0626430e-05
+ 6.1065781e-05 5.6105233e-05 4.6120502e-07 2.0878989e-04]",cruise ship,cruise ship,data/processedSmall/test/cruise ship/aida-ship-cruise-vacations-port-802359.jpg

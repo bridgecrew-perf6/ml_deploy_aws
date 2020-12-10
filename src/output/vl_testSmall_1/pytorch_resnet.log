@@ -1,0 +1,87 @@
+
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/08/2020, 18:14:36jobname | epochs | img_size | cnn_sel | batch_size
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/08/2020, 18:15:29jobname | epochs | img_size | cnn_sel | batch_size
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/09/2020, 08:13:37jobname | epochs | img_size | cnn_sel | batch_size
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/09/2020, 08:16:11jobname | epochs | img_size | cnn_sel | batch_size
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/09/2020, 08:20:09jobname | epochs | img_size | cnn_sel | batch_size
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/09/2020, 08:31:21jobname | epochs | img_size | cnn_sel | batch_size
+Epoch: 1 	Training Loss: 0.7213 	Validation Loss: 0.6178		Training Accuracy: 33.33%	 Validation Accuracy: 50.00%
+Epoch: 2 	Training Loss: 0.4670 	Validation Loss: 0.5093		Training Accuracy: 83.33%	 Validation Accuracy: 100.00%
+Epoch: 3 	Training Loss: 0.4090 	Validation Loss: 0.3950		Training Accuracy: 100.00%	 Validation Accuracy: 100.00%
+Best epoch: 3 with loss: 0.40 and acc: 100.00%
+10.26 total seconds elapsed. 5.13 seconds per epoch.
+Epoch: 3/3 | avg_train_loss: 0.409 | avg_valid_loss: 0.395 | avg_train_acc: 1.0 | avg_valid_acc: 1.0 |training_time: 1.40 seconds per epoch | validation_time: 0.34 seconds per epoch
+10.26 total seconds elapsed.
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/09/2020, 08:32:59jobname | epochs | img_size | cnn_sel | batch_size
+Epoch: 1 	Training Loss: 0.6566 	Validation Loss: 0.5695		Training Accuracy: 50.00%	 Validation Accuracy: 50.00%
+Epoch: 2 	Training Loss: 0.4388 	Validation Loss: 0.4189		Training Accuracy: 100.00%	 Validation Accuracy: 100.00%
+Epoch: 3 	Training Loss: 0.2903 	Validation Loss: 0.3210		Training Accuracy: 100.00%	 Validation Accuracy: 100.00%
+Best epoch: 3 with loss: 0.32 and acc: 100.00%
+9.13 total seconds elapsed. 4.56 seconds per epoch.
+Epoch: 3/3 | avg_train_loss: 0.2903 | avg_valid_loss: 0.321 | avg_train_acc: 1.0 | avg_valid_acc: 1.0 |training_time: 1.60 seconds per epoch | validation_time: 0.33 seconds per epoch
+9.13 total seconds elapsed.
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/09/2020, 08:34:15jobname | epochs | img_size | cnn_sel | batch_size
+Epoch: 1 	Training Loss: 0.6823 	Validation Loss: 0.6199		Training Accuracy: 50.00%	 Validation Accuracy: 50.00%
+Epoch: 2 	Training Loss: 0.4560 	Validation Loss: 0.4564		Training Accuracy: 83.33%	 Validation Accuracy: 100.00%
+Epoch: 3 	Training Loss: 0.2083 	Validation Loss: 0.3928		Training Accuracy: 100.00%	 Validation Accuracy: 100.00%
+Best epoch: 3 with loss: 0.39 and acc: 100.00%
+8.27 total seconds elapsed. 4.13 seconds per epoch.
+Epoch: 3/3 | avg_train_loss: 0.2083 | avg_valid_loss: 0.3928 | avg_train_acc: 1.0 | avg_valid_acc: 1.0 |training_time: 1.42 seconds per epoch | validation_time: 0.35 seconds per epoch
+8.27 total seconds elapsed.
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/09/2020, 08:38:53jobname | epochs | img_size | cnn_sel | batch_size
+Epoch: 1 	Training Loss: 0.7077 	Validation Loss: 0.5922		Training Accuracy: 50.00%	 Validation Accuracy: 50.00%
+Epoch: 2 	Training Loss: 0.6495 	Validation Loss: 0.4657		Training Accuracy: 50.00%	 Validation Accuracy: 100.00%
+Epoch: 3 	Training Loss: 0.3555 	Validation Loss: 0.3770		Training Accuracy: 100.00%	 Validation Accuracy: 100.00%
+Best epoch: 3 with loss: 0.38 and acc: 100.00%
+8.45 total seconds elapsed. 4.22 seconds per epoch.
+Epoch: 3/3 | avg_train_loss: 0.3555 | avg_valid_loss: 0.377 | avg_train_acc: 1.0 | avg_valid_acc: 1.0 |training_time: 1.46 seconds per epoch | validation_time: 0.33 seconds per epoch
+8.45 total seconds elapsed.
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/09/2020, 08:39:43jobname | epochs | img_size | cnn_sel | batch_size
+Epoch: 1 	Training Loss: 0.6585 	Validation Loss: 0.5107		Training Accuracy: 66.67%	 Validation Accuracy: 100.00%
+Epoch: 2 	Training Loss: 0.4411 	Validation Loss: 0.3642		Training Accuracy: 100.00%	 Validation Accuracy: 100.00%
+Epoch: 3 	Training Loss: 0.2782 	Validation Loss: 0.2629		Training Accuracy: 100.00%	 Validation Accuracy: 100.00%
+Best epoch: 3 with loss: 0.26 and acc: 100.00%
+9.25 total seconds elapsed. 4.63 seconds per epoch.
+Epoch: 3/3 | avg_train_loss: 0.2782 | avg_valid_loss: 0.2629 | avg_train_acc: 1.0 | avg_valid_acc: 1.0 |training_time: 1.52 seconds per epoch | validation_time: 0.35 seconds per epoch
+9.25 total seconds elapsed.
+
+
+---------------------Start Run pytorch_resnet-------------------------------------
+12/09/2020, 08:41:10jobname | epochs | img_size | cnn_sel | batch_size
+Epoch: 1 	Training Loss: 0.6780 	Validation Loss: 0.9278		Training Accuracy: 50.00%	 Validation Accuracy: 50.00%
+Epoch: 2 	Training Loss: 0.8043 	Validation Loss: 0.5043		Training Accuracy: 50.00%	 Validation Accuracy: 50.00%
+Epoch: 3 	Training Loss: 0.4340 	Validation Loss: 0.4701		Training Accuracy: 83.33%	 Validation Accuracy: 50.00%
+Best epoch: 3 with loss: 0.47 and acc: 50.00%
+10.67 total seconds elapsed. 5.33 seconds per epoch.
+Epoch: 3/3 | avg_train_loss: 0.434 | avg_valid_loss: 0.4701 | avg_train_acc: 0.833 | avg_valid_acc: 0.5 |training_time: 1.78 seconds per epoch | validation_time: 0.40 seconds per epoch
+10.67 total seconds elapsed.Overall Test Accuracy:100.00

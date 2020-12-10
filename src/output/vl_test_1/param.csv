@@ -1,0 +1,2 @@
+dts,jobname,new_data_dir,result_base_dir,epochs,max_epochs_stop,img_size,cnn_sel,batch_size
+"12/09/2020, 10:11:15",vl_test_1,data/processed,src/output,50,10,256,resnet50,32
