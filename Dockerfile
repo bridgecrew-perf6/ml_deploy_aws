@@ -9,16 +9,9 @@ WORKDIR /ml_deploy_aws
 COPY ./requirements.txt /ml_deploy_aws/
 
 # Install python requirements
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-
-#copy
-# COPY ./src /ml_deploy_aws/
-# COPY ./app /ml_deploy_aws/
-# COPY ./models/pth/resnet50 /ml_deploy_aws/models/pth/resnet50/
-# COPY ./models /ml_deploy_aws/
-# COPY ./tests /ml_deploy_aws/
-
+#copy project
 COPY . . 
 
 # expose appa port
