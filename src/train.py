@@ -117,8 +117,6 @@ if __name__ == '__main__':
     str0="Input parameters:"
     str0 = 'jobname | epochs | img_size | cnn_sel | batch_size' .\
                     format(jobname, new_data_dir, result_base_dir, epochs, img_size, cnn_sel,batch_size)
-    # str0 = "%s\njobname: %s\original_data_dir: %s\new_data_dir: %s\nresult_base_dir: %s\epochs: %d\max_epochs_stop: %s\img_size: %d\n" % (str0,jobname,original_data_dir,new_data_dir,result_base_dir,epochs,max_epochs_stop,img_size)
-    # str0="%s\n\cnn_sel: %d\nbatch_size:" % (str0,cnn_sel,batch_size)
     flog.write(str0)
 
     #### save input parameters
@@ -219,52 +217,6 @@ if __name__ == '__main__':
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ]),
     }
-
-#     wt_train_ex_img = Image.open('/home/valerie_lim/Emerson/WireTagdata/train/YellowTag/YellowTag (98).jpg')
-#     wt_test_ex_img = Image.open('/home/valerie_lim/Emerson/WireTagdata/test/CommissioningTag/CommissioningTag (95).jpg')
-
-#     fnb_test_ex_img= Image.open('/home/valerie_lim/Emerson/FnBdata/test/316_CS_Bolt/316_CS_Bolt (33).jpg')
-#     fnb_train_ex_img= Image.open('/home/valerie_lim/Emerson/FnBdata/train/316_CS_Bolt/316_CS_Bolt (1).jpg')
-
-#     if original_data_dir.split('/')[-2] == 'FlangeAndBolt':
-#         plt.figure(figsize=(24, 24))
-
-#         for i in range(16):
-#             ax = plt.subplot(4, 4, i + 1)
-#             _ = imshow_tensor(image_transforms['test'](fnb_test_ex_img), ax=ax)
-
-#         plt.savefig(f'{result_dir}/test_transformed_316_cs_33.png')
-#         plt.close()
-
-#         for i in range(16):
-#             ax = plt.subplot(4, 4, i + 1)
-#             _ = imshow_tensor(image_transforms['train'](fnb_train_ex_img), ax=ax)
-
-#         plt.savefig(f'{result_dir}/train_transformed_316_cs_1.png')
-#         plt.close()
-        
-#     elif original_data_dir.split('/')[-2] == 'WireTag':
-#         plt.figure(figsize=(24, 24))
-
-#         for i in range(16):
-#             ax = plt.subplot(4, 4, i + 1)
-#             _ = imshow_tensor(image_transforms['test'](wt_test_ex_img), ax=ax)
-
-#         plt.savefig(f'{result_dir}/test_transformed_ct_95.png')
-#         plt.close()
-
-#         for i in range(16):
-#             ax = plt.subplot(4, 4, i + 1)
-#             _ = imshow_tensor(image_transforms['train'](wt_train_ex_img), ax=ax)
-
-#         plt.savefig(f'{result_dir}/train_transformed_yt_98.png')
-#         plt.close()        
-
-#     else:
-#         '''
-#         current script is built to augment FnB and Wiretag only
-#         '''
-#         print('error. invalid folder name to perform augmentation')
     # Define DataLoaders
 
     data = {
@@ -1109,87 +1061,9 @@ if __name__ == '__main__':
     test_results.to_csv(f'{result_dir}/test_accuracy.csv',index=None)
     print(f"Test accuracy table saved to {result_dir}/test_accuracy.csv")
             
-   ####
-    #Refactored code to export pytorch model as onnx format for inference
-    #https://github.com/prabhat00155/onnx-odsc-tutorial/blob/master/pytorch%20experiment.ipynb
-    #####
-#     for test_features, test_targets in dataloaders['test']:     
-#         dummy_input = Variable(torch.randn(test_features.size()[0], 3, img_size, img_size)).to('cuda')   
-#         torch.onnx.export(model, dummy_input, f"{result_dir}/resnet50_imgSize224_test.onnx")
-#         onnx_test_model = f"{result_dir}/resnet50_imgSize224_test.onnx"
-#         session  = onnxruntime.InferenceSession(onnx_test_model,None)
-#         input_name = session.get_inputs()[0].name
-#         output_name = session.get_outputs()[0].name
-#         result = session.run([output_name], {input_name: test_features.numpy()})
-#         onnx_output=np.argmax(result[0], axis=1)
-#         test_onnx_preds.extend([idx_to_class[val]for val in onnx_output])
-#         test_truelabels.extend([idx_to_class[label]for label in test_targets.cpu().numpy()])   
-    
-#     test_pred_df = pd.DataFrame({'pred':test_onnx_preds,'actual':test_truelabels} )   
-#     # print(len(test_pred_df))     
-#     # print(test_pred_df.head())
-#     test_pred_df.to_csv(f'{result_dir}/test_pred.csv',index=None)
-#     print(f"Prediction output of test images saved to {result_dir}/test_pred.csv")
-#     test_results.to_csv(f'{result_dir}/test_accuracy.csv',index=None)
-#     print(f"Test accuracy table saved to {result_dir}/test_accuracy.csv")
-
-#     ##### save all image prediction result
-#     full_unaug_truelabels = []
-#     full_unaug_predictions = []
-        
-#     model.eval()
-#     with torch.no_grad():
-#         print("Getting predictions from full unaug set...")
-#         for data, targets in dataloaders['full_unaug']:
-#             # Tensors to gpu
-#             if train_on_gpu:
-#                 data, targets = data.to('cuda'), targets.to('cuda')           
-#             for label in targets.cpu().numpy():
-#                 full_unaug_truelabels.extend([idx_to_class[label]])
-#             full_unaug_output = model(data)
-#             _, full_unaug_pred = torch.max(full_unaug_output, dim=1)
-#             full_unaug_predictions.extend([idx_to_class[val] for val in full_unaug_pred.cpu().numpy()])
-#     full_unaug_pred_df = pd.DataFrame({'pred':full_unaug_predictions,'actual':full_unaug_truelabels} ) 
-#     print(len(full_unaug_pred_df))
-#     full_unaug_pred_df.to_csv(f'{result_dir}/all_pred.csv',index=None)
-#     print(f"Prediction output of all images saved to {result_dir}/all_pred.csv")
-    
-    
-# #     full_unaug_label = full_unaug_pred_df['actual']
-# #     full_unaug_pred_pred_cat = full_unaug_pred_df['pred']
-# #     cm=confusion_matrix(full_unaug_label,full_unaug_pred_pred_cat) 
-# #     accuracy = np.trace(cm) / np.sum(cm).astype('float') 
-# #     misclass = 1 - accuracy
-# #     cmap = plt.get_cmap('Blues') 
-# #     normalize = False 
-# #     plt.figure(figsize=(8, 6)) 
-# #     plt.imshow(cm, interpolation='nearest', cmap=cmap) 
-# #     plt.title('Full unaug conf mat') 
-# #     plt.colorbar()
-# #     tick_marks = np.arange(n_classes)
-# #     plt.xticks(tick_marks, classnames, rotation=45)
-# #     plt.yticks(tick_marks, classnames)
-# #     plt.savefig(f"{result_dir}/test_confusion_matrix.png")
-    
-#     ##### save all blind test image prediction result
-#     blind_test_truelabels = []
-#     blind_test_predictions = []
-        
-#     model.eval()
-#     with torch.no_grad():
-#         print("Getting predictions from blind test set...")
-#         for data, targets in dataloaders['blind_test']:
-#             # Tensors to gpu
-#             if train_on_gpu:
-#                 data, targets = data.to('cuda'), targets.to('cuda')           
-#             for label in targets.cpu().numpy():
-# #                 print(label)
-#                 blind_test_truelabels.extend([idx_to_class[label]])
-#             test_output = model(data)
-#             _, test_pred = torch.max(test_output, dim=1)
-#             blind_test_predictions.extend([idx_to_class[val] for val in test_pred.cpu().numpy()])
-# #             break
-#     blind_test_pred_df = pd.DataFrame({'pred':blind_test_predictions,'actual':blind_test_truelabels} ) 
-#     blind_test_pred_df.to_csv(f'{result_dir}/blind_test_red.csv',index=None)   
-#     print(len(blind_test_pred_df))
-#     print(f"Prediction output of all images saved to {result_dir}/blind_test_pred.csv")
+    now = datetime.now()
+    date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+    splitStr='\n\n\n------------------------End train--------------------------------------\n'
+    flog.write(date_time)
+    flog.write(splitStr)
+    flog.close() ### close log file
