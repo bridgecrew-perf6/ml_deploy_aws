@@ -6,11 +6,12 @@
 Step by step guide 
 
 ## Part 1: Develop model using transfer learning
-0. install the req and activate the virtual environment
+0. create a virtual environment, install the req and activate the venv
 
 ```
+(assuming you're also using anaconda3's python) python -m venv <venvName>
 pip install requirements.txt
-source torchVenv/bin/activate
+source <venvName>/bin/activate
 ```
 
 Images were downloaded from https://www.kaggle.com/clorichel/boat-types-recognition 
@@ -39,7 +40,7 @@ python src/predict.py --jobname vl_blindTest --model_fn src/output/vl_test_1/res
 
 python src/predict.py --jobname vl_blindTestSmall --model_fn src/output/vl_testSmall_1/resnet50-transfer.pth --test_dir data/processedSmall/test --result_base_dir 'src/output' --img_size 256 
 
-python src/predict.py --jobname vl_blindTest --model_fn src/output/vl_test_1/resnet50-transfer.pth --test_dir ./app/static/uploads/v_20201209_202635 --result_base_dir 'src/output' --img_size 256 
+python src/predict.py --jobname vl_blindTest --model_fn src/output/vl_test_1/resnet50-transfer.pth --test_dir ./app/static/uploads/b_20201211_100510 --result_base_dir 'src/output' --img_size 256 
 ```
 
 4. flask
@@ -204,6 +205,18 @@ b. Sign up your account.
 c. Save and go ahead. 
 d. Go to ‘Jenkins management’
 
+23. On EC2, install git; and check where it's installed
+a. sudo yum install git
+b. which git
+
+24. Goto to -> Manage Jenkins -> Global Tool Configuration ->Git->Path to Git executable and copy the git executable path. Mine is /usr/bin/git
+
+25. Follow [this guide](https://towardsdatascience.com/automating-data-science-projects-with-jenkins-8e843771aa02) to build Jenkins pipeline 
 
 
 
+Reference 
+https://medium.com/@mohan08p/install-and-configure-jenkins-on-amazon-ami-8617f0816444 
+
+Security settings
+http://abhijitkakade.com/2019/06/how-to-reset-jenkins-admin-users-password/
