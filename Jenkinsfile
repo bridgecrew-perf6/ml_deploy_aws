@@ -86,6 +86,15 @@ pipeline {
             }
         }
 
+        // stage('Python pytest Tests') {
+        //     dir('python/pytest') {
+        //         sh 'virtualenv -p /usr/bin/python3 venv'
+        //         sh 'source venv/bin/activate && pip install -r requirements.txt'
+        //         sh 'source venv/bin/activate && pytest --junit-xml=test_results.xml test || true'
+        //         junit keepLongStdio: true, allowEmptyResults: true, testResults: 'test_results.xml'
+        //     }
+        // }
+
         // stage('Integration tests') {
         //     steps {
         //         sh  ''' source activate ${BUILD_TAG}
@@ -133,7 +142,7 @@ pipeline {
 
     post {
         always {
-            sh 'conda remove --yes -n ${BUILD_TAG} --all'
+            sh '''conda remove --yes -n ${BUILD_TAG} --all'''
         }
         failure {
             emailext (
