@@ -27,8 +27,10 @@ pipeline {
         stage('Build environment') {
             steps {
                 echo "Building virtualenv"
-                sh  ''' conda create --yes -n ${BUILD_TAG} python
-                        source activate ${BUILD_TAG}
+                sh  ''' #!/usr/bin/env bash
+                        conda env create -f envs/torchVenv.yaml
+                        source $WORKSPACE/miniconda/etc/profile.d/conda.sh
+                        conda activate miniconda/envs/ansible-env/
                         pip install --no-cache-dir -r requirements.txt
                     '''
             }
