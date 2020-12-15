@@ -28,6 +28,10 @@ pipeline {
             steps {
                 echo "Building virtualenv"
                 sh  ''' #!/usr/bin/env bash
+                        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -nv -O miniconda.sh
+                        bash miniconda.sh -b -p $WORKSPACE/miniconda
+                        conda config --set always_yes yes --set changeps1 no
+                        conda update -q conda
                         conda env create -f envs/torchVenv.yaml
                         source $WORKSPACE/miniconda/etc/profile.d/conda.sh
                         conda activate miniconda/envs/ansible-env/
