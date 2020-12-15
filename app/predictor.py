@@ -1,4 +1,5 @@
 import flask
+from flask_htpasswd import HtPasswdAuth
 from flask import Flask, flash, render_template, url_for, send_from_directory, redirect, request, abort, jsonify, session
 from flask_session import Session
 import sys
@@ -21,6 +22,8 @@ app.secret_key = os.urandom(24)
 UPLOAD_FOLDER = './app/static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['FLASK_HTPASSWD_PATH'] = './app/.htpasswd'
+app.config['FLASK_AUTH_ALL']=True
 SESSION_TYPE = 'filesystem'
 app.config.from_object(__name__)
 Session(app)
@@ -36,19 +39,21 @@ def main():
 
 
 @app.route('/demo/', methods=['POST', 'GET'])
-def emerson():
+@htpasswd.required
+def demo(user):
     # model list
     session['cnn_model_folder'] = './models/pth'
     session['result_base_dir'] = './src/output'
     session['upload_path'] = './app/static/uploads'
     session['pth_script_path'] = './src/predict.py'
+    session['pth_train_script'] = './src/train.py'
     session['python'] = 'python'
         
     cnn_model_folder = session.get('cnn_model_folder')
     cnn_models = os.listdir(cnn_model_folder)
     print('render cnn_models',cnn_models)
     return render_template("demo.html",
-                           cnn_models=cnn_models)
+                           cnn_models=cnn_models,user=user)
 
 
 @app.route('/predictresult/', methods=['POST'])
