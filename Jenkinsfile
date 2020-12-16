@@ -12,9 +12,13 @@ pipeline {
     //     timestamps()
     // }
 
+    // environment {
+    //   PATH="/var/lib/jenkins/miniconda3/bin:$PATH"
+    // }
+
     environment {
-      PATH="/var/lib/jenkins/miniconda3/bin:$PATH"
-    }
+      PATH="$WORKSPACE/miniconda3/bin:$PATH"
+    }    
 
     stages {
 
@@ -24,45 +28,45 @@ pipeline {
             }
         }
 
-        // stage('setup miniconda') {
-        // steps {
-        //     sh '''#!/usr/bin/env bash
-        //     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-        //     bash miniconda.sh -b -p $WORKSPACE/miniconda
-        //     hash -r
-        //     conda config --set always_yes yes --set changeps1 no
-        //     conda update -q conda
+        stage('setup miniconda') {
+        steps {
+            sh '''#!/usr/bin/env bash
+            wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+            bash miniconda.sh -b -p $WORKSPACE/miniconda
+            hash -r
+            conda config --set always_yes yes --set changeps1 no
+            conda update -q conda
 
-        //     # Useful for debugging any issues with conda
-        //     conda info -a
-        //     conda config --add channels defaults
-        //     conda config --add channels conda-forge
-        //     conda config --add channels bioconda
+            # Useful for debugging any issues with conda
+            conda info -a
+            conda config --add channels defaults
+            conda config --add channels conda-forge
+            conda config --add channels bioconda
 
-        //     # create torchVenv env
-        //     conda init bash
-        //     conda env create -f envs/torchVenv.yaml
-        //     '''
-        // }
+            # create torchVenv env
+            conda init bash
+            conda env create -f envs/torchVenv.yaml
+            '''
+        }
 
-        // stage('Build environment') {
-        //     steps {
-        //         echo "Building virtualenv"
-        //         sh  ''' #!/usr/bin/env bash
-        //                 conda init bash
-        //                 conda activate miniconda/envs/torchVenv/
-        //                 pip install --no-cache-dir -r requirements.txt
-        //             '''
-        //     }
-        // }
         stage('Build environment') {
             steps {
-                sh '''conda create --yes -n ${BUILD_TAG} python
-                      source activate ${BUILD_TAG} 
-                      pip install --no-cache-dir -r requirements.txt
+                echo "Building virtualenv"
+                sh  ''' #!/usr/bin/env bash
+                        conda init bash
+                        conda activate miniconda/envs/torchVenv/
+                        pip install --no-cache-dir -r requirements.txt
                     '''
             }
         }
+        // stage('Build environment') {
+        //     steps {
+        //         sh '''conda create --yes -n ${BUILD_TAG} python
+        //               source activate ${BUILD_TAG} 
+        //               pip install --no-cache-dir -r requirements.txt
+        //             '''
+        //     }
+        // }
         // stage('Static code metrics') {
         //     steps {
         //         echo "Raw metrics"
@@ -99,12 +103,20 @@ pipeline {
         //     }
         // }
 
+
         stage('Unit tests') {
             steps {
-                sh  ''' source activate ${BUILD_TAG}
+                sh  ''' conda activate miniconda/envs/torchVenv/
                         pytest --v --junit-xml tests/reports/unit_tests.xml
                     '''
             }
+
+        // stage('Unit tests') {
+        //     steps {
+        //         sh  ''' source activate ${BUILD_TAG}
+        //                 pytest --v --junit-xml tests/reports/unit_tests.xml
+        //             '''
+        //     }
             post {
                 always {
                     // Archive unit tests for the future
