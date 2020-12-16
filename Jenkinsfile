@@ -64,6 +64,7 @@ pipeline {
         stage('Build environment') {
             steps {
                 sh '''conda create --yes -n ${BUILD_TAG} python
+                      conda create --name p37 python=3.7
                       source activate ${BUILD_TAG} 
                       pip install --no-cache-dir -r requirements.txt
                     '''
@@ -126,6 +127,7 @@ pipeline {
         stage('Unit tests') {
             steps {
                 sh  ''' source activate ${BUILD_TAG}
+                        conda create --name p37 python=3.7
                         pytest --v --junit-xml tests/reports/unit_tests.xml
                     '''
             }
