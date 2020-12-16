@@ -111,13 +111,6 @@ pipeline {
                         pytest --v --junit-xml tests/reports/unit_tests.xml
                     '''
             }
-        }
-        // stage('Unit tests') {
-        //     steps {
-        //         sh  ''' source activate ${BUILD_TAG}
-        //                 pytest --v --junit-xml tests/reports/unit_tests.xml
-        //             '''
-        //     }
             post {
                 always {
                     // Archive unit tests for the future
@@ -127,7 +120,24 @@ pipeline {
                           )
                 }
             }
+
         }
+    }
+        // stage('Unit tests') {
+        //     steps {
+        //         sh  ''' source activate ${BUILD_TAG}
+        //                 pytest --v --junit-xml tests/reports/unit_tests.xml
+        //             '''
+        //     }
+            // post {
+            //     always {
+            //         // Archive unit tests for the future
+            //         junit (allowEmptyResults: true,
+            //               testResults: './tests/reports/unit_tests.xml',
+            //             //   fingerprint: true
+            //               )
+            //     }
+            // }
 
         // stage('Python pytest Tests') {
         //     dir('python/pytest') {
