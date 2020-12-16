@@ -126,7 +126,7 @@ pipeline {
         stage('Unit tests') {
             steps {
                 sh  ''' source activate ${BUILD_TAG}
-                        pytest --v --junit-xml tests/reports/unit_tests.xml
+                        pytest -v --junit-xml tests/reports/unit_tests.xml
                     '''
             }
             post {
