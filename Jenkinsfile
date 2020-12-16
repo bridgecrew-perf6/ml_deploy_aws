@@ -29,7 +29,7 @@ pipeline {
         }
 
         stage('setup miniconda') {
-        steps {
+            steps {
             sh '''#!/usr/bin/env bash
             wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
             bash miniconda.sh -b -p $WORKSPACE/miniconda
@@ -47,6 +47,7 @@ pipeline {
             conda init bash
             conda env create -f envs/torchVenv.yaml
             '''
+            }
         }
 
         stage('Build environment') {
@@ -110,7 +111,7 @@ pipeline {
                         pytest --v --junit-xml tests/reports/unit_tests.xml
                     '''
             }
-
+        }
         // stage('Unit tests') {
         //     steps {
         //         sh  ''' source activate ${BUILD_TAG}
