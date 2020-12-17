@@ -6,7 +6,13 @@
 Step by step guide 
 
 ## Part 1: Develop model using transfer learning
-0. create a virtual environment, install the req and activate the venv
+0. Clone and setup environment
+
+```
+git clone https://github.com/valerielimyh/ml_deploy_aws.git
+```
+
+b. create a virtual environment, install the req and activate the venv
 
 ```
 (assuming you're also using anaconda3's python) python -m venv <venvName>
@@ -53,7 +59,7 @@ python app/predictor.py
 It’s not mandatory to specify a tag name. The :latest tag is a default tag when build is run without a specific tag specified. explicitly tag your image after each build if you want to maintain a good version history.
 
 ```
-docker build -t valerielimyh/ml_deploy_aws:1.0 .
+docker build -t valerielimyh/ml_deploy_aws:2.0 .
 ```
 - the “.” at the end of the command tells Docker to locate the Dockerfile in my current directory, which is my project folder. 
 
@@ -81,7 +87,7 @@ docker login --username=<yourhubusername>
 b. copy the IMAGE ID for that particular image and tag it
 
 ```
-docker tag 689e0e8ba525 valerielimyh/ml_deploy_aws:1.0
+docker tag be0d6ed3471f valerielimyh/ml_deploy_aws:2.0
 ```
 
 c. push your image to Docker Hub using the repository you created with the command
@@ -108,7 +114,7 @@ sudo yum install docker
 9. After installation, pull the docker image we pushed to the repository.
 
 ```
-docker pull valerielimyh/ml_deploy_aws:1.0
+docker pull valerielimyh/ml_deploy_aws:2.0
 ```
 
 a. if you face this error `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?`, resolve by doing
@@ -127,11 +133,17 @@ docker images
 11. Run the docker image 
 
 ```
-docker run --name cv-deploy -d -p 5000:5000 valerielimyh/ml_deploy_aws:1.0
+docker run --name cv-model-deploy -d -p 5000:5000 valerielimyh/ml_deploy_aws:2.0
 ```
+-d option to create persistent docker container
 
 You can test the API on your browser with the Public DNS for your instance 
 
+(or you can pull the docker image for this repo from Docker Hub using
+
+```
+docker pull valerielimyh/ml_deploy_aws:2.0
+```)
 
 ## Part 3: Install and Configure Jenkins
 12. install java1.8 
@@ -155,7 +167,7 @@ sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenk
 15.  Import a key file from Jenkins-CI to enable installation from the package
 
 ```
-sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+sudo rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key 
 ```
 
 16. Install Jenkins
@@ -183,12 +195,6 @@ sudo service jenkins start
 sudo systemctl enable jenkins.service
 ```
 
-20. 
-
-```
-sudo systemctl enable jenkins.service
-```
-
 21. On browser, open the following link
 http://<yourPublicDNS>:8080
 - can be your server IP or public DNS at the above port to get the jenkins dashboard by making sure that the port is open i.e. you added the inbould rule for that port on your AMI server (default port 8080)
@@ -209,14 +215,65 @@ d. Go to ‘Jenkins management’
 a. sudo yum install git
 b. which git
 
-24. Goto to -> Manage Jenkins -> Global Tool Configuration ->Git->Path to Git executable and copy the git executable path. Mine is /usr/bin/git
+24. Goto to -> Manage Jenkins -> Global Tool Configuration ->Git->Path to Git executable and copy the git executable path. Mine is `/usr/bin/git`
 
 25. Follow [this guide](https://towardsdatascience.com/automating-data-science-projects-with-jenkins-8e843771aa02) to build Jenkins pipeline 
 
+26. Jenkins does not see our nice system Miniconda installation. We will have to make Jenkins use proper python interpreter and create virtual environments accessible in the workspace of the project every time job is run. The best solution is to install Miniconda and manage environments from the jenkins user level. 
 
+$ sudo su
+```
+# su - jenkins
+```
+cd /var/lib/jenkins # go to jenkins $HOME dir
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh -p /var/lib/jenkins/miniconda3
+
+Miniconda3 will now be installed into this location:
+/var/lib/jenkins/miniconda3
+
+- Press ENTER to confirm the location
+- Press CTRL-C to abort the installation
+- Or specify a different location below
+
+...
+installation finished.
+Do you wish the installer to prepend the Miniconda3 install location
+to PATH in your /var/lib/jenkins/.bashrc ? [yes|no]
+[no] >>>  #say no
+
+
+
+[Guide on Jenkins anatomy] (https://mdyzma.github.io/2017/10/14/python-app-and-jenkins/)
 
 Reference 
 https://medium.com/@mohan08p/install-and-configure-jenkins-on-amazon-ami-8617f0816444 
 
 Security settings
 http://abhijitkakade.com/2019/06/how-to-reset-jenkins-admin-users-password/
+
+
+
+
+
+## To pull docker image from registry as a non-root user
+[Reference] (https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user)
+
+- Create the docker group.
+sudo groupadd <docker-grp>
+
+- Add your user to the docker group.
+sudo usermod -aG <docker-grp> ${USER}
+
+- You would need to log out and log back in so that your group membership is re-evaluated or type the following command:
+sudo su ${USER}
+
+- pull the docker image 
+
+```
+docker pull valerielimyh/ml_deploy_aws:2.0
+```
+
+## Access control for Flask 
+- Currently using flask-htpasswd
+

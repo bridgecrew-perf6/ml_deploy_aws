@@ -8,6 +8,7 @@ dataclasses==0.6
 dominate==2.6.0
 Flask==1.1.2
 Flask-Bootstrap==3.3.7.1
+flask-htpasswd==0.4.0
 Flask-Session==0.3.2
 future==0.18.2
 importlib-metadata==3.1.1
