@@ -13,6 +13,8 @@ pipeline {
     // }
 
     environment {
+      imagename = "valerielimyh/ml_deploy_aws"
+      registryCredential = 'valerie-dockerhub'
       PATH="/var/lib/jenkins/miniconda3/bin:$PATH"
     }
 
@@ -24,7 +26,8 @@ pipeline {
 
         stage ("Code pull"){
             steps{
-                checkout scm
+                git([url: 'https://github.com/valerielimyh/ml_deploy_aws', branch: 'master', credentialsId: 'valerie-github-user-token'])
+                // checkout scm
             }
         }
 
@@ -137,9 +140,46 @@ pipeline {
                         //   fingerprint: true
                           )
                 }
+                success {
+
+                    echo "Success"
+                }
+
+                failure {
+
+                    echo 'Failure. Something went wrong with the build. Printing environment for debugging'            
+                    sh '''printenv'''
+                    echo 'Searching for test directories/files in the system...'
+                    sh '''find / -name "test*"'''
+                }
+
             }
     }
+        stage('Building image') {
+            steps{
+            script {
+            dockerImage = docker.build imagename
+                   }
+                }
+            }
 
+        stage('Deploy Image') {
+            steps{
+            script {
+            docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+            dockerImage.push('latest')
+                    }
+                }
+            }
+        }
+
+        stage('Remove Unused docker image') {
+            steps{
+            sh "docker rmi $imagename:$BUILD_NUMBER"
+            sh "docker rmi $imagename:latest"
+                }
+            }
     }
         // stage('Python pytest Tests') {
         //     dir('python/pytest') {
