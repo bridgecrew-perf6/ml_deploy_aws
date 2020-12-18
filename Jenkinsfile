@@ -161,7 +161,7 @@ pipeline {
             def commit_id = readFile('.git/commit-id').trim()
             println commit_id
             // Build the Docker image
-            def dockerImage = docker.build imagename
+            dockerImage = docker.build imagename
 
             }
 
