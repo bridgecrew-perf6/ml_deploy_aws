@@ -23,7 +23,7 @@ pipeline {
     // }    
 
     stages {
-
+        def dockerImage
         stage ("Code pull"){
             steps{
                 git([url: 'https://github.com/valerielimyh/ml_deploy_aws', branch: 'master', credentialsId: 'valerie-github-user-token'])
@@ -156,18 +156,20 @@ pipeline {
             }
         }
         stage('Building image') {
-            steps{
-            script {
+             // Get SHA1 of current commit
+            sh "git rev-parse HEAD > .git/commit-id"
+            def commit_id = readFile('.git/commit-id').trim()
+            println commit_id
+            // Build the Docker image
             def dockerImage = docker.build imagename
-                   }
-                }
+
             }
 
         stage('Deploy Image') {
             steps{
             script {
             docker.withRegistry( '', registryCredential ) {
-            dockerImage.push("$BUILD_NUMBER")
+            dockerImage.push("$commit_id")
             dockerImage.push('latest')
                     }
                 }
@@ -176,8 +178,8 @@ pipeline {
 
         stage('Remove Unused docker image') {
             steps{
-            sh "docker rmi $imagename:$BUILD_NUMBER"
-            sh "docker rmi $imagename:latest"
+            sh '''docker rmi $imagename:$commit_id'''
+            sh '''docker rmi $imagename:latest'''
                 }
             }
     }
@@ -240,9 +242,9 @@ pipeline {
         }
         failure {
             emailext (
-                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-                         <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+                subject: "FAILED: Job '${env.JOB_NAME} [${env.commit_id}]'",
+                body: """<p>FAILED: Job '${env.JOB_NAME} [${env.commit_id}]':</p>
+                         <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.commit_id}]</a>&QUOT;</p>""",
                 recipientProviders: [[$class: 'DevelopersRecipientProvider']]
             )
         }
