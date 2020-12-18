@@ -158,11 +158,11 @@ pipeline {
         stage('Building image') {
 
             steps {
-             // Get SHA1 of current commit
+             script {
             // Build the Docker image
             dockerImage = docker.build imagename
+                }
             }
-
             }
 
         stage('Deploy Image') {
