@@ -23,7 +23,7 @@ pipeline {
     // }    
 
     stages {
-        def dockerImage
+        // def dockerImage
         stage ("Code pull"){
             steps{
                 git([url: 'https://github.com/valerielimyh/ml_deploy_aws', branch: 'master', credentialsId: 'valerie-github-user-token'])
@@ -156,12 +156,15 @@ pipeline {
             }
         }
         stage('Building image') {
+
+            steps {
              // Get SHA1 of current commit
             sh "git rev-parse HEAD > .git/commit-id"
-            def commit_id = readFile('.git/commit-id').trim()
+            def commit_id = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
             println commit_id
             // Build the Docker image
             dockerImage = docker.build imagename
+            }
 
             }
 
