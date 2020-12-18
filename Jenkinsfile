@@ -159,9 +159,6 @@ pipeline {
 
             steps {
              // Get SHA1 of current commit
-            sh "git rev-parse HEAD > .git/commit-id"
-            def commit_id = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-            println commit_id
             // Build the Docker image
             dockerImage = docker.build imagename
             }
@@ -172,7 +169,7 @@ pipeline {
             steps{
             script {
             docker.withRegistry( '', registryCredential ) {
-            dockerImage.push("$commit_id")
+            dockerImage.push("$BUILD_NUMBER")
             dockerImage.push('latest')
                     }
                 }
@@ -181,7 +178,7 @@ pipeline {
 
         stage('Remove Unused docker image') {
             steps{
-            sh '''docker rmi $imagename:$commit_id'''
+            sh '''docker rmi $imagename:$BUILD_NUMBER'''
             sh '''docker rmi $imagename:latest'''
                 }
             }
@@ -245,9 +242,9 @@ pipeline {
         }
         failure {
             emailext (
-                subject: "FAILED: Job '${env.JOB_NAME} [${env.commit_id}]'",
-                body: """<p>FAILED: Job '${env.JOB_NAME} [${env.commit_id}]':</p>
-                         <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.commit_id}]</a>&QUOT;</p>""",
+                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+                         <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
                 recipientProviders: [[$class: 'DevelopersRecipientProvider']]
             )
         }
