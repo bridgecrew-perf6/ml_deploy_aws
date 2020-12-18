@@ -1,6 +1,8 @@
 import flask
 from flask_htpasswd import HtPasswdAuth
 from flask import Flask, flash, render_template, url_for, send_from_directory, redirect, request, abort, jsonify, session
+# , g
+# from flask.ext import htauth
 from flask_session import Session
 import sys
 import os
@@ -22,10 +24,11 @@ app.secret_key = os.urandom(24)
 UPLOAD_FOLDER = './app/static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['FLASK_HTPASSWD_PATH'] = './app/.htpasswd'
-app.config['FLASK_AUTH_ALL']=True
 SESSION_TYPE = 'filesystem'
 app.config.from_object(__name__)
+app.config['FLASK_HTPASSWD_PATH'] = './app/.htpasswd'
+app.config['FLASK_AUTH_ALL']=True
+htpasswd = HtPasswdAuth(app)
 Session(app)
 
 def allowed_file(filename):
@@ -65,11 +68,6 @@ def predictresult():
     python = session.get('python')
     
     # Load data from form and create a cmd line call
-    # predict_data_decode = request.data.decode().split("&")
-    # predict_data = defaultdict(list)
-    # for data in predict_data_decode:
-    #     k,v = data.split("=")
-    #     predict_data[k].append(v)
     predict_data = request.form
     print(predict_data)
     jobname = predict_data['predictJobName'] + \
@@ -114,8 +112,6 @@ def predictresult():
                 file.save(save_path)
         print(f"{n_img} multiple images upload complete")
     
-    # predict_data = {'predictJobName': [], 'predictSelectCnnModel': [], 'predictSelectYoloModel': [], 
-    # 'PredictYoloConfidenceThreshold': [], 'gridImgIn': [], 'predictServerPath': []})
     cnn_model = request.form.get('predictSelectCnnModel')
     if cnn_model is None:
         flash("Please choose models.")
@@ -123,11 +119,9 @@ def predictresult():
     if cnn_model is not None:
         cnn_model_list = request.form.getlist('predictSelectCnnModel')
         print('get cnn_model_list',cnn_model_list)
-        # cnn_output_path = f'{result_base_dir}/{jobname}'
+
         for cnn_model in cnn_model_list:
             cnn_weight_path = f'{cnn_model_folder}/{cnn_model}/{cnn_model}-transfer.pth'
-            # cnn_output_path = f'{result_base_dir}/{jobname}/{cnn_model}'
-            # os.mkdir(cnn_output_path)
             cmd = f"{python} {pth_script_path} --jobname {jobname} --model_fn {cnn_weight_path} --test_dir {image_path} --result_base_dir {result_base_dir} --img_size 256"
             print('cmd:',cmd)
             result = os.popen(cmd)
@@ -207,8 +201,8 @@ def predictresult():
 @app.route('/traincnnresult/', methods=['POST'])
 def traincnnresult():
     cnn_model_folder = session.get('cnn_model_folder')
-    python3 = session.get('python3')
-    cnn_train_script = session.get('cnn_train_script')
+    python = session.get('python')
+    pth_train_script = session.get('pth_train_script')
     
 
     # Load data from form
@@ -227,19 +221,21 @@ def traincnnresult():
     trainCnnInputPath = train_cnn_data['trainCnnInputPath']
 
     # create directories
-    result_dir = f'{cnn_model_folder}/{jobname}'
-    os.mkdir(result_dir)
-    result_log_path = f'{result_dir}/cnn_crop_aug_train.out'
+    # result_dir = f'{cnn_model_folder}/{jobname}'
+    # os.mkdir(result_dir)
+    # result_log_path = f'{result_dir}/cnn_crop_aug_train.out'
+    result_dir=result_base_dir+"/"+jobname
+    result_log_path = result_dir+"/pytorch_resnet.log"
 
     # create cmd line to train
-    if trainImgColor == 'color':
-        color = ''
-    else:
-        color = ' --grayscale'
+    # if trainImgColor == 'color':
+    #     color = ''
+    # else:
+    #     color = ' --grayscale'
 
     if sys.platform == "linux":
         # the command below for running py files in the background in Linux and mac, use (ps ax | grep filename.py) to find its id, and use (kill -9 {job_id} &) to kill the job
-        cmd = f"{python3} {cnn_train_script} --jobname '{jobname}' --directory '{trainCnnInputPath}' --result_base_dir '{cnn_model_folder}' --epochs {trainCnnEpochs} --img_size {trainCnnImageResize} --cnn_sel {trainCnnArch} --test_ratio {trainCnnTestRatio} --batch_size {trainCnnBatchSize} --target_train_size {trainCnnTrainSize} --class_type {trainClassType}{color} >> {result_log_path} &"
+        cmd = f"{python} {pth_train_script} --jobname '{jobname}' --new_data_dir '{trainCnnInputPath}' --result_base_dir '{cnn_model_folder}' --epochs {trainCnnEpochs} --max_epochs_stop {trainCnnMaxEpochStop} --img_size {trainCnnImageResize} --cnn_sel {trainCnnArch} --batch_size {trainCnnBatchSize} >> {result_log_path} &"
         print(cmd)
         # os.system(cmd)
         subprocess.Popen(cmd, close_fds=True, shell=True)
@@ -282,7 +278,7 @@ def traincnnresultrefresh():
 
     if sys.platform == "linux":
         # check process running and print output in Linux
-        get_running_jobs_cmd = "ps aux | grep cnn_crop_aug_train"
+        get_running_jobs_cmd = "ps aux | grep train"
         jobs = subprocess.Popen(
             get_running_jobs_cmd, shell=True, stdout=subprocess.PIPE)
         output = set(jobs.stdout)

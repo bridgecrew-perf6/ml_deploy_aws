@@ -55,11 +55,13 @@ python src/predict.py --jobname vl_blindTest --model_fn src/output/vl_test_1/res
 python app/predictor.py
 ```
 
+## run docker image locally
+
 5. Build the docker image (make sure you have docker running). 
 It’s not mandatory to specify a tag name. The :latest tag is a default tag when build is run without a specific tag specified. explicitly tag your image after each build if you want to maintain a good version history.
 
 ```
-docker build -t valerielimyh/ml_deploy_aws:2.0 .
+docker build -t valerielimyh/ml_deploy_aws:1.0 .
 ```
 - the “.” at the end of the command tells Docker to locate the Dockerfile in my current directory, which is my project folder. 
 
@@ -74,7 +76,7 @@ docker run --name cv-deploy -p 5000:5000 valerielimyh/ml_deploy_aws:1.0
 (Optional) Clean up the container
 
 ```
-docker rmi ml_deploy_aws
+docker rmi <dockerName>:<tag>
 ```
 
 7. Push docker image to Docker Hub
@@ -87,7 +89,7 @@ docker login --username=<yourhubusername>
 b. copy the IMAGE ID for that particular image and tag it
 
 ```
-docker tag be0d6ed3471f valerielimyh/ml_deploy_aws:2.0
+docker tag be0d6ed3471f valerielimyh/ml_deploy_aws:1.0
 ```
 
 c. push your image to Docker Hub using the repository you created with the command
@@ -242,7 +244,13 @@ Do you wish the installer to prepend the Miniconda3 install location
 to PATH in your /var/lib/jenkins/.bashrc ? [yes|no]
 [no] >>>  #say no
 
+[Jenkins declarative pipeline config to build docker image] (https://medium.com/faun/docker-build-push-with-declarative-pipeline-in-jenkins-2f12c2e43807)
+- Install the [Docker Pipelines plugin](https://docs.cloudbees.com/docs/admin-resources/latest/plugins/docker-workflow) on Jenkins:
+Manage Jenkins → Manage Plugins.
+Search Docker Pipelines, click on Install without restart 
 
+
+(https://blog.nimbleci.com/2016/08/31/how-to-build-docker-images-automatically-with-jenkins-pipeline/)
 
 [Guide on Jenkins anatomy] (https://mdyzma.github.io/2017/10/14/python-app-and-jenkins/)
 
@@ -256,7 +264,7 @@ http://abhijitkakade.com/2019/06/how-to-reset-jenkins-admin-users-password/
 
 
 
-## To pull docker image from registry as a non-root user
+## To pull docker image from registry as a non-root user 
 [Reference] (https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 - Create the docker group.
@@ -268,6 +276,9 @@ sudo usermod -aG <docker-grp> ${USER}
 - You would need to log out and log back in so that your group membership is re-evaluated or type the following command:
 sudo su ${USER}
 
+-
+getent group
+
 - pull the docker image 
 
 ```
@@ -276,4 +287,19 @@ docker pull valerielimyh/ml_deploy_aws:2.0
 
 ## Access control for Flask 
 - Currently using flask-htpasswd
+
+
+## Misc
+
+### Troubleshooting 
+when faced with `Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get xxx dial unix /var/run/docker.sock: connect: permission denied` while Jenkins declarative pipeline is building docker image
+[Ref] (https://stackoverflow.com/questions/47854463/docker-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socke#answer-49364278)
+The user jenkins needs to be added to the group docker:
+
+```
+$ sudo usermod -a -G docker jenkins
+$ sudo su
+# usermod -aG root jenkins
+# chmod 777 /var/run/docker.sock
+```
 
