@@ -142,7 +142,7 @@ You can test the API on your browser with the Public DNS for your instance
 docker pull valerielimyh/ml_deploy_aws:3.0
 ```
 
-##### Flask demo can be found [here] (https://youtu.be/eAlhw-Nu_CQ)
+##### Flask demo can be found [here](https://youtu.be/eAlhw-Nu_CQ)
 
 ## Part 4: Install and Configure Jenkins
 12. install java1.8 
@@ -244,39 +244,43 @@ to PATH in your /var/lib/jenkins/.bashrc ? [yes|no]
 - Install the [Docker Pipelines plugin](https://docs.cloudbees.com/docs/admin-resources/latest/plugins/docker-workflow) on Jenkins:
 Manage Jenkins → Manage Plugins.
 Search Docker Pipelines, click on Install without restart 
-- Follow remaining instructions on this [post] (https://medium.com/faun/docker-build-push-with-declarative-pipeline-in-jenkins-2f12c2e43807) starting from `Create credentials on Jenkins for GitHub and docker hub` 
+- Follow remaining instructions on this [post](https://medium.com/faun/docker-build-push-with-declarative-pipeline-in-jenkins-2f12c2e43807) starting from `Create credentials on Jenkins for GitHub and docker hub` 
 
 A successful run looks like this ![](successful_jenkins_pipeline_demo.png)
 
 
 References
 
-* [Guide on Jenkins anatomy] (https://mdyzma.github.io/2017/10/14/python-app-and-jenkins/) 
-* [Install and Configure Jenkins on AWS EC2] (https://medium.com/@mohan08p/install-and-configure-jenkins-on-amazon-ami-8617f0816444) 
-* [Managing Jenkins security settings] 
-(http://abhijitkakade.com/2019/06/how-to-reset-jenkins-admin-users-password/)
+* [Guide on Jenkins anatomy](https://mdyzma.github.io/2017/10/14/python-app-and-jenkins/) 
+* [Install and Configure Jenkins on AWS EC2](https://medium.com/@mohan08p/install-and-configure-jenkins-on-amazon-ami-8617f0816444) 
+* [Managing Jenkins security settings](http://abhijitkakade.com/2019/06/how-to-reset-jenkins-admin-users-password/)
 
 
 
 ## Misc
 
 ### To pull docker image from registry as a non-root user 
-[Reference] (https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user)
+[Reference](https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 - Create the docker group
-- ```
+```
 sudo groupadd <docker-grp>
+```
 
 - Add your user to the docker group.
-- ```
+```
 sudo usermod -aG <docker-grp> ${USER}
+```
 
 - You would need to log out and log back in so that your group membership is re-evaluated or type the following command:
-- ```
+```
 sudo su ${USER}
+```
 
--
+- Check if you added the current user
+```
 getent group
+```
 
 - pull the docker image 
 
