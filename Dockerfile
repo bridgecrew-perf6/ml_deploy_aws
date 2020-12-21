@@ -9,9 +9,10 @@ WORKDIR /ml_deploy_aws
 COPY ./requirements.txt /ml_deploy_aws/
 
 # Install python requirements
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
-#copy project
+
+#copy
 COPY . . 
 
 # expose appa port

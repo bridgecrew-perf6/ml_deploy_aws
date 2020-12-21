@@ -55,7 +55,7 @@ python src/predict.py --jobname vl_blindTest --model_fn src/output/vl_test_1/res
 python app/predictor.py
 ```
 
-## run docker image locally
+## Part 2: run docker image locally
 
 5. Build the docker image (make sure you have docker running). 
 It’s not mandatory to specify a tag name. The :latest tag is a default tag when build is run without a specific tag specified. explicitly tag your image after each build if you want to maintain a good version history.
@@ -98,16 +98,14 @@ c. push your image to Docker Hub using the repository you created with the comma
 docker push valerielimyh/ml_deploy_aws
 ```
 
-## Part 2: Run the Docker Image on the EC2 instance
+## Part 3: Run the Docker Image on the EC2 instance
 
 7. ssh into your EC2 instance (I'm using  Amazon Linux AMI 2018.03.0 (HVM))
- 
 ```
 ssh -i ~/.ssh/yourpairkey.pem ec2-user@my-instance-public-dns-name
 ```
 
 8. in your EC2 instance,  update your instance packages
-
 ```
 sudo yum update
 sudo yum install docker
@@ -116,38 +114,37 @@ sudo yum install docker
 9. After installation, pull the docker image we pushed to the repository.
 
 ```
-docker pull valerielimyh/ml_deploy_aws:2.0
+docker pull valerielimyh/ml_deploy_aws:3.0
 ```
 
 a. if you face this error `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?`, resolve by doing
-
 ```
 sudo service docker start
 Then pull the image again.
 ```
 
 10. Confirm image is downloaded by running
-
 ```
 docker images
 ```
 
 11. Run the docker image 
-
 ```
-docker run --name cv-model-deploy -d -p 5000:5000 valerielimyh/ml_deploy_aws:2.0
+docker run --name cv-model-deploy -d -p 5000:5000 valerielimyh/ml_deploy_aws:3.0
 ```
 -d option to create persistent docker container
 
 You can test the API on your browser with the Public DNS for your instance 
 
-(or you can pull the docker image for this repo from Docker Hub using
+(or you can pull the docker image for this repo from Docker Hub using)
 
 ```
-docker pull valerielimyh/ml_deploy_aws:2.0
-```)
+docker pull valerielimyh/ml_deploy_aws:3.0
+```
 
-## Part 3: Install and Configure Jenkins
+##### Flask demo can be found [here] (https://youtu.be/eAlhw-Nu_CQ)
+
+## Part 4: Install and Configure Jenkins
 12. install java1.8 
 
 ```
@@ -202,7 +199,6 @@ http://<yourPublicDNS>:8080
 - can be your server IP or public DNS at the above port to get the jenkins dashboard by making sure that the port is open i.e. you added the inbould rule for that port on your AMI server (default port 8080)
 
 21. on server, copy the initial password to proceed with the installation
-
 ```
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
@@ -223,11 +219,10 @@ b. which git
 
 26. Jenkins does not see our nice system Miniconda installation. We will have to make Jenkins use proper python interpreter and create virtual environments accessible in the workspace of the project every time job is run. The best solution is to install Miniconda and manage environments from the jenkins user level. 
 
+```
 $ sudo su
-```
 # su - jenkins
-```
-cd /var/lib/jenkins # go to jenkins $HOME dir
+# cd /var/lib/jenkins # go to jenkins $HOME dir
 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh -p /var/lib/jenkins/miniconda3
 
@@ -243,37 +238,41 @@ installation finished.
 Do you wish the installer to prepend the Miniconda3 install location
 to PATH in your /var/lib/jenkins/.bashrc ? [yes|no]
 [no] >>>  #say no
+```
 
-[Jenkins declarative pipeline config to build docker image] (https://medium.com/faun/docker-build-push-with-declarative-pipeline-in-jenkins-2f12c2e43807)
+## Part 5: Jenkins declarative pipeline config to run unit tests and build docker image
 - Install the [Docker Pipelines plugin](https://docs.cloudbees.com/docs/admin-resources/latest/plugins/docker-workflow) on Jenkins:
 Manage Jenkins → Manage Plugins.
 Search Docker Pipelines, click on Install without restart 
+- Follow remaining instructions on this [post] (https://medium.com/faun/docker-build-push-with-declarative-pipeline-in-jenkins-2f12c2e43807) starting from `Create credentials on Jenkins for GitHub and docker hub` 
+
+A successful run looks like this ![](successful_jenkins_pipeline_demo.png)
 
 
-(https://blog.nimbleci.com/2016/08/31/how-to-build-docker-images-automatically-with-jenkins-pipeline/)
+References
 
-[Guide on Jenkins anatomy] (https://mdyzma.github.io/2017/10/14/python-app-and-jenkins/)
-
-Reference 
-https://medium.com/@mohan08p/install-and-configure-jenkins-on-amazon-ami-8617f0816444 
-
-Security settings
-http://abhijitkakade.com/2019/06/how-to-reset-jenkins-admin-users-password/
-
-
+* [Guide on Jenkins anatomy] (https://mdyzma.github.io/2017/10/14/python-app-and-jenkins/) 
+* [Install and Configure Jenkins on AWS EC2] (https://medium.com/@mohan08p/install-and-configure-jenkins-on-amazon-ami-8617f0816444) 
+* [Managing Jenkins security settings] 
+(http://abhijitkakade.com/2019/06/how-to-reset-jenkins-admin-users-password/)
 
 
 
-## To pull docker image from registry as a non-root user 
+## Misc
+
+### To pull docker image from registry as a non-root user 
 [Reference] (https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user)
 
-- Create the docker group.
+- Create the docker group
+- ```
 sudo groupadd <docker-grp>
 
 - Add your user to the docker group.
+- ```
 sudo usermod -aG <docker-grp> ${USER}
 
 - You would need to log out and log back in so that your group membership is re-evaluated or type the following command:
+- ```
 sudo su ${USER}
 
 -
@@ -285,11 +284,11 @@ getent group
 docker pull valerielimyh/ml_deploy_aws:2.0
 ```
 
-## Access control for Flask 
+### Access control for Flask 
 - Currently using flask-htpasswd
 
 
-## Misc
+
 
 ### Troubleshooting 
 when faced with `Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get xxx dial unix /var/run/docker.sock: connect: permission denied` while Jenkins declarative pipeline is building docker image
