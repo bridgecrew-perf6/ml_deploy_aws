@@ -243,8 +243,6 @@ def traincnnresult():
         time.sleep(5)
         # check process running and print output in Linux
         get_running_jobs_cmd = "ps aux | grep cnn_crop_aug_train"
-        # if hostname == 'kuldldsccappo01.kul.apac.dell.com':
-        #     get_running_jobs_cmd = f"{get_running_jobs_cmd}"
         jobs = subprocess.Popen(
             get_running_jobs_cmd, shell=True, stdout=subprocess.PIPE)
         output = set(jobs.stdout)
@@ -360,8 +358,6 @@ def trainyoloresult():
                     time.sleep(5)
                     # check process running and print output in Linux
                     get_running_jobs_cmd = "ps aux | grep yolo5_train"
-                    # if hostname == 'kuldldsccappo01.kul.apac.dell.com':
-                    #     get_running_jobs_cmd = f"{get_running_jobs_cmd}"
                     jobs = subprocess.Popen(
                         get_running_jobs_cmd, shell=True, stdout=subprocess.PIPE)
                     output = set(jobs.stdout)
