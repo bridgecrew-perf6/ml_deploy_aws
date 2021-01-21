@@ -1,7 +1,9 @@
-.DS_store
-.idea/
-.venv/
-notebooks/2c-feature-importance.ipynb
-*.ipynb_checkpoints/
+.vscode
+.DS_Store
+app/.htpasswd
+tests/unitTests/__pycache__
+src/__pycache__
+src/output
+flask_session/
 *.pyc
-*.csv
+app/static/uploads
