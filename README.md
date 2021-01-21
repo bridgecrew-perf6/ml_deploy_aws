@@ -142,7 +142,8 @@ You can test the API on your browser with the Public DNS for your instance
 docker pull valerielimyh/ml_deploy_aws:3.0
 ```
 
-##### Flask demo can be found [here](https://youtu.be/eAlhw-Nu_CQ)
+##### Flask demo can be found [here](https://youtu.be/eAlhw-Nu_CQ) 
+![](flask_demo_screenshot.png)
 
 ## Part 4: Install and Configure Jenkins
 12. install java1.8 
