@@ -60,7 +60,6 @@ from PIL import Image
 
 from timeit import default_timer as timer
 
-# original_data_dir = f"/home/valerie_lim/Emerson/FlangeAndBolt/TrainingSet/"
 categories = glob(original_data_dir+"*")
 
 filedf = pd.DataFrame()
