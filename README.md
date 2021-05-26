@@ -1,7 +1,7 @@
 # Dockerize and deploy machine learning application on AWS
 - A multi-class image classification use case
 - Tools: Pytorch, ResNet, Flask, Unit test, EC2, Jenkins, Github
-- work in progress
+- Accompanying article: [MLOps: Integrate DevOps in ML systems](https://valerielimyh.medium.com/mlops-integrate-devops-in-ml-systems-d44d954de876)
 
 Step by step guide 
 
